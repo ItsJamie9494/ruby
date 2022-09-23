@@ -1,4 +1,4 @@
-use std::io::stderr;
+use std::{env, fmt, io::stderr};
 
 use ::log::LevelFilter;
 use chrono::Utc;
@@ -6,11 +6,13 @@ use fern::{
     colors::{Color, ColoredLevelConfig},
     log_file, Dispatch, InitError,
 };
+use uwuifier::{round_up16, uwuify_sse};
 
 #[derive(Default)]
 pub struct Logger {
     pub log_path: String,
     pub color_config: ColoredLevelConfig,
+    uwu: bool,
 }
 
 impl Logger {
@@ -26,6 +28,7 @@ impl Logger {
                     .error(Color::Red)
                     .trace(Color::Blue)
             }),
+            uwu: env::var("RUBY_UWU").map(|x| x == "true").unwrap_or(false),
         }
     }
 
@@ -34,17 +37,18 @@ impl Logger {
             .level(LevelFilter::Debug)
             .chain({
                 let colors = self.color_config;
+                let should_uwu = self.uwu;
                 let mut logger = Dispatch::new()
                     .format(move |out, message, record| {
                         out.finish(format_args!(
                             "[{} Ruby{}] {} {}",
-                            colors.color(record.level()),
+                            Self::uwu_text(should_uwu, colors.color(record.level())),
                             match (record.file(), record.line()) {
                                 (Some(file), Some(line)) => format!(":{}:{}", file, line),
                                 _ => "".into(),
                             },
                             Utc::now().format("[%Y-%m-%d %H:%M:%S]"),
-                            message
+                            Self::uwu_text(should_uwu, message)
                         ));
                     })
                     .chain(stderr());
@@ -61,5 +65,19 @@ impl Logger {
             .apply()?;
 
         Ok(())
+    }
+
+    // there is no reason this should exist but it's hilarious
+    fn uwu_text<F: fmt::Display>(should_uwu: bool, text: F) -> String {
+        if should_uwu {
+            let string = text.to_string();
+            let bytes = string.as_bytes();
+            let mut temp1 = vec![0u8; round_up16(bytes.len()) * 16];
+            let mut temp2 = vec![0u8; round_up16(bytes.len()) * 16];
+            String::from_utf8(uwuify_sse(bytes, &mut temp1, &mut temp2).to_vec())
+                .expect("Expected a String")
+        } else {
+            text.to_string()
+        }
     }
 }
