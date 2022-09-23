@@ -1,0 +1,12 @@
+[package]
+name = "cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ruby"
+path = "src/main.rs"
+
+[dependencies]
+clap = "3.2.22"
+ruby = {path = "../"}

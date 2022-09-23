@@ -1,6 +1,11 @@
 //! # Ruby
 //! A crate for installing Linux distributions
 
+#![deny(clippy::pedantic)]
+#![allow(clippy::missing_errors_doc)]
+
+pub mod modules;
+
 #[cfg(test)]
 mod tests {
     #[test]
