@@ -4,8 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [workspace]
-members = [
-    "cli"
-]
+members = ["cli"]
 
 [dependencies]
+chrono = "0.4.22"
+fern = { version = "0.6.1", features = ["colored"] }
+log = "0.4.17"

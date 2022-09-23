@@ -9,4 +9,5 @@ path = "src/main.rs"
 
 [dependencies]
 clap = "3.2.22"
+log = "0.4.17"
 ruby = {path = "../"}

@@ -1,7 +1,7 @@
 #![deny(clippy::pedantic)]
 
 use clap::{App, Arg};
-use ruby::modules::timezones::Timezones;
+use ruby::{log::Logger, modules::timezones::Timezones};
 
 fn main() {
     let matches = App::new("ruby")
@@ -14,6 +14,10 @@ fn main() {
                 .max_values(2),
         )
         .get_matches();
+
+    if let Err(err) = Logger::new(None, None).log() {
+        eprintln!("Failed to initalise logger: {}", err);
+    }
 
     let timezones;
     let timezone = match matches.values_of("timezone") {
@@ -39,5 +43,5 @@ fn main() {
         None => None,
     };
 
-    println!("{:?}", timezone.expect("Expected a Timezone").path());
+    log::info!("{:?}", timezone.expect("Expected a Timezone").path());
 }
