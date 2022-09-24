@@ -9,5 +9,6 @@ members = ["cli"]
 [dependencies]
 chrono = "0.4.22"
 fern = { version = "0.6.1", features = ["colored"] }
+libparted = "0.1.5"
 log = "0.4.17"
 uwuify = "0.2.2"
