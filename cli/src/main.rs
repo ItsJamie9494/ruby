@@ -1,7 +1,10 @@
 #![deny(clippy::pedantic)]
 
 use clap::{App, Arg};
-use ruby::{log::Logger, modules::timezones::Timezones};
+use ruby::{
+    log::Logger,
+    modules::{disks::Disks, timezones::Timezones},
+};
 
 fn main() {
     let matches = App::new("ruby")
@@ -42,6 +45,11 @@ fn main() {
         }
         None => None,
     };
+
+    let disks = Disks::probe();
+    for disk in disks.physical {
+        log::info!("{}, {}", disk.device_path.display(), disk.model_name);
+    }
 
     log::info!("{:?}", timezone.expect("Expected a Timezone").path());
 }
